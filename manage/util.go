@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"log"
 	"net/url"
 	"strings"
 
@@ -13,18 +14,21 @@ type (
 )
 
 // DefaultValidateURI validates that redirectURI is contained in baseURI
-func DefaultValidateURI(baseURI string, redirectURI string) error {
-	base, err := url.Parse(baseURI)
-	if err != nil {
-		return err
+func DefaultValidateURI(domain string, redirectURI string) error {
+	bases := strings.Split(domain, ",")
+	for i := 0; i < len(bases); i++ {
+		log.Println("DefaultValidateURI baseURI", bases[i], "redirectURI", redirectURI)
+		base, err := url.Parse(bases[i])
+		if err != nil {
+			return err
+		}
+		redirect, err := url.Parse(redirectURI)
+		if err != nil {
+			return err
+		}
+		if strings.HasSuffix(redirect.Host, base.Host) {
+			return nil
+		}
 	}
-
-	redirect, err := url.Parse(redirectURI)
-	if err != nil {
-		return err
-	}
-	if !strings.HasSuffix(redirect.Host, base.Host) {
-		return errors.ErrInvalidRedirectURI
-	}
-	return nil
+	return errors.ErrInvalidRedirectURI
 }
