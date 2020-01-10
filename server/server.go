@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -140,6 +141,7 @@ func (s *Server) CheckResponseType(rt oauth2.ResponseType) bool {
 // ValidationAuthorizeRequest the authorization request validation
 func (s *Server) ValidationAuthorizeRequest(r *http.Request) (*AuthorizeRequest, error) {
 	redirectURI := r.FormValue("redirect_uri")
+	log.Println("redirectURI", redirectURI)
 	clientID := r.FormValue("client_id")
 	if !(r.Method == "GET" || r.Method == "POST") ||
 		clientID == "" {
